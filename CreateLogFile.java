@@ -23,7 +23,7 @@ public class CreateLogFile {
     // ==================== 常量定义 ====================
     private static final String DEFAULT_LOG_DIRECTORY = "logs";
     private static final int MAX_QUEUE_SIZE = 10000;
-    private static final int BATCH_SIZE = 100;  // 批量写入条数
+    private static final int BATCH_SIZE = 100;
     private static final DateTimeFormatter TIMESTAMP_FORMATTER = 
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
     private static final DateTimeFormatter DATE_FORMATTER = 
@@ -38,7 +38,7 @@ public class CreateLogFile {
         public int getLevel() { return level; }
     }
     
-    private LogLevel currentLogLevel = LogLevel.INFO;  // 默认日志级别
+    private LogLevel currentLogLevel = LogLevel.INFO;
     
     // ==================== 成员变量 ====================
     private String logDirectory;
@@ -46,17 +46,8 @@ public class CreateLogFile {
     private BufferedWriter writer;
     private BlockingQueue<String> logQueue;
     private volatile boolean running = true;
-    private AtomicLong logCounter = new AtomicLong(0);  // 日志计数
+    private AtomicLong logCounter = new AtomicLong(0);
     private Thread writerThread;
-    private LogFileNameStrategy fileNameStrategy = LogFileNameStrategy.DAILY;
-    
-    // 文件名策略枚举
-    public enum LogFileNameStrategy {
-        DAILY,           // 每日一个文件 Log_20240214.log
-        SEQUENTIAL,      // 带序号 Log_20240214_001.log
-        HOURLY,          // 每小时 Log_20240214_14.log
-        TIMESTAMP        // 时间戳 Log_20240214_143025.log
-    }
     
     // ==================== 构造方法 ====================
     private CreateLogFile() {
@@ -75,7 +66,7 @@ public class CreateLogFile {
     private void initLogFile() {
         try {
             createLogDirectory();
-            rotateLogFileIfNeeded();
+            createNewLogFile();
         } catch (IOException e) {
             System.err.println("初始化日志文件失败: " + e.getMessage());
             e.printStackTrace();
@@ -91,53 +82,29 @@ public class CreateLogFile {
         }
     }
     
-    private void rotateLogFileIfNeeded() throws IOException {
-        String newFileName = generateFileName();
+    // 简化：只使用带序号的日期文件名
+    private void createNewLogFile() throws IOException {
+        currentLogFileName = generateSequentialFileName();
+        File logFile = new File(logDirectory, currentLogFileName);
+        writer = new BufferedWriter(new FileWriter(logFile, true));
         
-        // 如果文件名变化，关闭旧文件创建新文件
-        if (!newFileName.equals(currentLogFileName)) {
-            if (writer != null) {
-                writer.close();
-            }
-            currentLogFileName = newFileName;
-            File logFile = new File(logDirectory, currentLogFileName);
-            writer = new BufferedWriter(new FileWriter(logFile, true));
-            
-            // 写入日志会话开始标记
-            writeToFile("========== 日志会话开始 ==========");
-            writeToFile("日志文件: " + logFile.getAbsolutePath());
-        }
+        // 写入日志会话开始标记
+        writeToFile("========== 日志会话开始 ==========");
+        writeToFile("日志文件: " + logFile.getAbsolutePath());
     }
     
-    private String generateFileName() {
+    // 生成带日期和序号的文件名
+    private String generateSequentialFileName() {
         LocalDateTime now = LocalDateTime.now();
         String dateStr = now.format(DATE_FORMATTER);
         
-        switch (fileNameStrategy) {
-            case DAILY:
-                return "Log_" + dateStr + ".log";
-                
-            case SEQUENTIAL:
-                return generateSequentialFileName(now, dateStr);
-                
-            case HOURLY:
-                return "Log_" + dateStr + "_" + 
-                       String.format("%02d", now.getHour()) + ".log";
-                
-            case TIMESTAMP:
-                return "Log_" + now.format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".log";
-                
-            default:
-                return "Log_" + dateStr + ".log";
-        }
-    }
-    
-    private String generateSequentialFileName(LocalDateTime now, String dateStr) {
+        // 查找当天已存在的文件，确定序号
         File directory = new File(logDirectory);
         if (!directory.exists()) {
             return "Log_" + dateStr + "_001.log";
         }
         
+        // 获取当天所有的日志文件
         File[] files = directory.listFiles((dir, name) -> 
             name.startsWith("Log_" + dateStr) && name.endsWith(".log"));
         
@@ -145,6 +112,7 @@ public class CreateLogFile {
         if (files != null) {
             for (File file : files) {
                 String fileName = file.getName();
+                // 提取序号部分 Log_20240101_001.log
                 String numberStr = fileName.replaceAll(".*_(\\d+)\\.log", "$1");
                 try {
                     int number = Integer.parseInt(numberStr);
@@ -155,7 +123,10 @@ public class CreateLogFile {
             }
         }
         
-        return "Log_" + dateStr + "_" + String.format("%03d", maxNumber + 1) + ".log";
+        // 生成新的序号（最大序号+1，不足3位补0）
+        int newNumber = maxNumber + 1;
+        String sequentialNumber = String.format("%03d", newNumber);
+        return "Log_" + dateStr + "_" + sequentialNumber + ".log";
     }
     
     private void startWriterThread() {
@@ -324,50 +295,24 @@ public class CreateLogFile {
         log(LogLevel.INFO, "日志级别设置为: " + level);
     }
     
-    /**
-     * 功能11: 设置文件名策略
-     */
-    public void setFileNameStrategy(LogFileNameStrategy strategy) {
-        this.fileNameStrategy = strategy;
-        log(LogLevel.INFO, "文件名策略设置为: " + strategy);
-        try {
-            rotateLogFileIfNeeded();
-        } catch (IOException e) {
-            logException(e);
-        }
-    }
-    
-    /**
-     * 功能12: 手动切换日志文件
-     */
-    public boolean rotateLogFile() {
-        try {
-            rotateLogFileIfNeeded();
-            return true;
-        } catch (IOException e) {
-            logException(e);
-            return false;
-        }
-    }
-    
     // ==================== 查询方法 ====================
     
     /**
-     * 功能13: 获取当前日志文件路径
+     * 功能11: 获取当前日志文件路径
      */
     public String getCurrentLogPath() {
         return new File(logDirectory, currentLogFileName).getAbsolutePath();
     }
     
     /**
-     * 功能14: 获取日志总数
+     * 功能12: 获取日志总数
      */
     public long getLogCount() {
         return logCounter.get();
     }
     
     /**
-     * 功能15: 获取队列剩余容量
+     * 功能13: 获取队列剩余容量
      */
     public int getQueueRemainingCapacity() {
         return logQueue.remainingCapacity();
@@ -376,7 +321,7 @@ public class CreateLogFile {
     // ==================== 管理方法 ====================
     
     /**
-     * 功能16: 立即刷新缓冲区
+     * 功能14: 立即刷新缓冲区
      */
     public synchronized void flush() {
         try {
@@ -387,7 +332,7 @@ public class CreateLogFile {
     }
     
     /**
-     * 功能17: 关闭日志系统
+     * 功能15: 关闭日志系统
      */
     public void shutdown() {
         running = false;
@@ -430,7 +375,6 @@ public class CreateLogFile {
         logger.logSection("键值对测试");
         logger.logKeyValue("玩家名称", "Alex");
         logger.logKeyValue("生命值", 80);
-        logger.logKeyValue("饥饿值", 65);
         
         // 测试异常记录
         logger.logSection("异常记录测试");
@@ -439,11 +383,6 @@ public class CreateLogFile {
         } catch (Exception e) {
             logger.log("发生算术异常", e);
         }
-        
-        // 测试文件名策略
-        logger.logSection("文件名策略测试");
-        logger.setFileNameStrategy(LogFileNameStrategy.HOURLY);
-        logger.log("这是每小时日志文件中的一条记录");
         
         // 测试批量日志
         logger.logSection("批量日志测试");
@@ -458,13 +397,10 @@ public class CreateLogFile {
         logger.logSection("日志统计信息");
         logger.log("当前日志文件: %s", logger.getCurrentLogPath());
         logger.log("总日志条数: %d", logger.getLogCount());
-        logger.log("队列剩余容量: %d", logger.getQueueRemainingCapacity());
         
         // 等待所有日志写入
         Thread.sleep(1000);
         
         System.out.println("\n测试完成！日志文件位置: " + logger.getCurrentLogPath());
-        
-        // 程序结束时自动调用shutdown（通过关闭钩子）
     }
 }
