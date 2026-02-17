@@ -30,6 +30,7 @@ public class WorldEnviroment {
             System.err.println(errorMsg);
             // 记录日志
             CreateLogFile.getInstance().log(errorMsg);
+            CreateLogFile.getInstance().flush();
             // 修正值
             speedMultiplier = 1.0;
             }
@@ -110,18 +111,21 @@ public class WorldEnviroment {
                                 isPaused = true;
                                 System.out.println("[System] Paused");
                                 CreateLogFile.getInstance().log("[System] Paused");
+                                CreateLogFile.getInstance().flush();
                                 break;
                                 
                             case "r":
                                 isPaused = false;
                                 System.out.println("[System] Repaird");
                                 CreateLogFile.getInstance().log("[System] Repaird");
+                                CreateLogFile.getInstance().flush();
                                 break;
                                 
                             case "q":
                                 isRunning = false;
                                 System.out.println("[System] Exiting...");
                                 CreateLogFile.getInstance().log("[System] Exiting...");
+                                CreateLogFile.getInstance().flush();
                                 break;
                                 
                             default:
