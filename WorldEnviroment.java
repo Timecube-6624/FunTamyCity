@@ -22,11 +22,17 @@ public class WorldEnviroment {
         System.out.print("请输入速度倍数 (例如: 2.0 或 0.5): ");
         try {
             speedMultiplier = Double.parseDouble(scanner.nextLine());
-            if (speedMultiplier <= 0) speedMultiplier = 1.0;
-            //向控制台输出
-            System.out.println("Maths Error:double speedMultiplier must bigger than zero!");
-            //通过log(String message)方法向CreateLogFile.class中输出日志消息并写入文件
-            CreateLogFile.getInstance().log("Maths Error:double speedMultiplier must bigger than zero!");
+
+            if (speedMultiplier <= 0) {
+            // 构建包含原始值的错误信息
+            String errorMsg = "Maths Error(1): double speedMultiplier must be greater than zero, but was " + speedMultiplier + ". Resetting to 1.0.";
+            // 向控制台输出错误（使用标准错误流更合适）
+            System.err.println(errorMsg);
+            // 记录日志
+            CreateLogFile.getInstance().log(errorMsg);
+            // 修正值
+            speedMultiplier = 1.0;
+            }
         } catch (Exception e) {
             speedMultiplier = 1.0;
         }
@@ -102,17 +108,20 @@ public class WorldEnviroment {
                         switch (command) {
                             case "p":
                                 isPaused = true;
-                                System.out.println("[系统] 已暂停");
+                                System.out.println("[System] Paused");
+                                CreateLogFile.getInstance().log("[System] Paused");
                                 break;
                                 
                             case "r":
                                 isPaused = false;
-                                System.out.println("[系统] 已恢复");
+                                System.out.println("[System] Repaird");
+                                CreateLogFile.getInstance().log("[System] Repaird");
                                 break;
                                 
                             case "q":
                                 isRunning = false;
-                                System.out.println("[系统] 正在退出...");
+                                System.out.println("[System] Exiting...");
+                                CreateLogFile.getInstance().log("[System] Exiting...");
                                 break;
                                 
                             default:
