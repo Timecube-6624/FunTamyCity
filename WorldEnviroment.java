@@ -1,6 +1,11 @@
 
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicLong;
+import org.json.JSONObject;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class WorldEnviroment {
     // ==================== 核心变量 ====================
@@ -70,7 +75,19 @@ public class WorldEnviroment {
         
         System.out.println("Tick管理器已停止，总计执行 " + tickCount.get() + " Ticks");
         scanner.close();
-    }
+
+        try{
+
+            String jsonString = readFileString("Profiles/WorldEnviroment.json");
+            JSONObject json = new JSONObject(jsonString);
+            double CityAtractiveness = json.getDouble("CityAtractiveness");
+            System.out.println("读取到" + CityAtractiveness);
+        } catch (IOException e) {
+            System.err.println("FileError(1):" + e.getMessage());
+            e.printStackTrace();
+            }
+        }
+
     
     /**
      * 执行单个Tick的逻辑
@@ -91,7 +108,8 @@ public class WorldEnviroment {
             System.out.printf("[Tick %d] 季节: %s | 速度: %.1fx | 暂停: %s%n",
                 currentTick, SEASONS[currentSeason], speedMultiplier, isPaused ? "是" : "否");
         }
-        
+    
+
         // 在这里添加你的世界逻辑
         // processWorldTick(currentTick);
     }
@@ -151,6 +169,12 @@ public class WorldEnviroment {
         
         listenerThread.setDaemon(true);
         listenerThread.start();
+    }
+    //将路径换成字符串传入
+    public static String readFileString(String filePath) throws IOException {
+        return new String(Files.readAllBytes(Paths.get("Profiles/WorldEnviroment.json")));
+
+       
     }
     
     /**
