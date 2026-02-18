@@ -20,8 +20,12 @@ public class WorldEnviroment {
     private static int currentSeason = 0;
     private static long seasonTick = 0;
     
+    //城市数据相关
+    private static int CityAtractiveness = 100;//初始化城市吸引力数据
+    
     // 控制台输入
     private static Scanner scanner = new Scanner(System.in);
+
     
     public static void main(String[] args) {
         System.out.print("请输入速度倍数 (例如: 2.0 或 0.5): ");
@@ -82,6 +86,20 @@ public class WorldEnviroment {
             JSONObject json = new JSONObject(jsonString);
             double CityAtractiveness = json.getDouble("CityAtractiveness");
             System.out.println("读取到" + CityAtractiveness);
+
+
+            if ("Spring".equals(currentSeason)) {//设置不同季节的基本城市吸引值
+                CityAtractiveness = 100;
+            } else if("Summer".equals(currentSeason)) {
+                CityAtractiveness = 100;
+            } else if("Autumn".equals(currentSeason)) {
+                CityAtractiveness = 100;
+            } else if("Winter".equals(currentSeason)) {
+                CityAtractiveness = 100;
+            } else {
+                CityAtractiveness = 100;
+            }
+            
         } catch (IOException e) {
             System.err.println("FileError(1):" + e.getMessage());
             e.printStackTrace();
@@ -112,6 +130,7 @@ public class WorldEnviroment {
 
         // 在这里添加你的世界逻辑
         // processWorldTick(currentTick);
+
     }
     
     /**
@@ -174,7 +193,6 @@ public class WorldEnviroment {
     public static String readFileString(String filePath) throws IOException {
         return new String(Files.readAllBytes(Paths.get("Profiles/WorldEnviroment.json")));
 
-       
     }
     
     /**
@@ -189,7 +207,6 @@ public class WorldEnviroment {
      */
     public static String getCurrentSeason() {
         return SEASONS[currentSeason];
-    }
     
     /**
      * 获取当前季节索引
