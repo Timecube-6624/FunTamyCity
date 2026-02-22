@@ -1,3 +1,31 @@
+WHAT IS CHANGE:
+1.LogFileNameStrategy enumerate was deleted;
+2.String fileNameStrategy was deleted;
+3.Method setFileNameStrategy was deleted;
+4.Method rotateLogFile was deleted;
+
+**1.ABOUT LOGGING:**
+`log(string message)` can record logs in the level of INFO; 
+`log(LogLevel level,String message)` can record logs in a appointed level;
+`log(String format,Object... args)` can format the logging; 
+`log(LogLevel level,String fromat,Object... args)` can record logs with format and level;
+`log(String message,Throwable e)` can record abnormal informations; `logException(Throwable e)` can record the entire abnormal stack; `logKeyValue(String key,Object value)` can record the Key-value pairs(键值对); `logSeprarator()` can record a Separator;
+`logSection(String title)` can record a section with title. 
+
+**2.ABOUT QUERY** 
+`getCurrentLogPath()` can get the entire path of our logs 
+`getLogCount()` can get how many logs it catch 
+`getQueueRemainingCapacity()` can get the Remaining capacity of the log queue(日志队列剩余容量); 
+
+**3.HOW TO MANAGE**
+`flush()` can flush the buffer and write file compulsory(强制的); 
+`shutdown()` can shut the logging system(it will automatically work when we quit);
+
+**4.LOG LEVLES:**
+DEBUG/INFO/WARN/ERROR/FATAL
+use`logger.setLogLevel(LogLevel.<//Log levels>);` to set record leve
+
+
 package TimeControl;
 
 import java.io.*;
@@ -406,3 +434,4 @@ public class CreateLogFile {
         System.out.println("\n测试完成！日志文件位置: " + logger.getCurrentLogPath());
     }
 }
+
