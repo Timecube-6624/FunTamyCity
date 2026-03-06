@@ -29,7 +29,28 @@ public class WorldEnviroment {
     // 控制台输入
     private static Scanner scanner = new Scanner(System.in);
 
-    
+    public static void startSimulate(double speed){
+        //判断程序是否已经在运行
+        if (isRunning) {
+            System.out.println("Simulation already running");
+            CreateLogFile.getInstance().log("Simulation already running");
+            CreateLogFile.getInstance().setLogLevel(CreateLogFile.LogLevel.WARN);
+            //业务逻辑
+            stopSimulate();
+        }
+
+        //重置状态，后期使用读取存档数据
+        isRunning = true;
+        isPaused = false;
+        speedMultiplier = speed > 0 ? speed : 1.0;
+        tickCount.set(0);
+        currentSeason = 0;
+        seasonTick = 0;
+
+        System.out.println("Start simulation");
+        CreateLogFile.getInstance().log("[WorldEnviroment]Start simulation");
+    }
+
     public static void main(String[] args) {
         System.out.print("请输入速度倍数 (例如: 2.0 或 0.5): ");
         try {
@@ -112,7 +133,15 @@ public class WorldEnviroment {
             }
         }
 
-    
+    //补充stopSimulate()方法的实现逻辑
+    private static void stopSimulate() {
+        if (isRunning) {
+            isRunning = false;
+            System.out.println("Simulation stopped");
+            CreateLogFile.getInstance().log("Simulation stopped");
+        }
+    }
+
     /**
      * 执行单个Tick的逻辑
      */
@@ -134,8 +163,8 @@ public class WorldEnviroment {
         }
     
 
-        // 在这里添加你的世界逻辑
-        // processWorldTick(currentTick);
+        // #逻辑添加点：在这里添加你的世界逻辑
+
 
     }
     
