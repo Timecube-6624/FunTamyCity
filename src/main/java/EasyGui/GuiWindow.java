@@ -1,5 +1,5 @@
 package EasyGui;
-import TimeControl.CreateLogFile;
+import Simulation.CreateLogFile;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;

@@ -1,0 +1,17 @@
+{
+  "Citizens": {
+    "Example·example": {
+      "ID": 0,
+      "Name": "Example·example",
+      "Gender": "male",
+      "Personality": {
+        "Neuroticism": 0,
+        "Extraversion": 0,
+        "Openness": 0,
+        "Agreeableness": 0,
+        "Conscientiousness": 0
+      },
+      "Family": ""
+    }
+  }
+}
