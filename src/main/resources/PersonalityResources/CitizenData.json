@@ -1,17 +1,69 @@
 {
   "Citizens": {
-    "Example·example": {
+    "Example·PDP": {
       "ID": 0,
-      "Name": "Example·example",
-      "Gender": "male",
+      "Name": "Example·PDP",
+      "Gender": "female",
       "Personality": {
-        "Neuroticism": 0,
-        "Extraversion": 0,
-        "Openness": 0,
-        "Agreeableness": 0,
-        "Conscientiousness": 0
+        "coreSymbol": {
+          "naturalSelf": "tiger",
+          "adaptedSelf": "owl",
+          "perceivedByOthers": "tiger"
+        },
+        "scores": {
+          "naturalSelf": {
+            "dominance支配度": 9.2,
+            "extraversion表达度": 4.1,
+            "patience耐心度": 3.5,
+            "conformity精确度": 6.8,
+            "decisionMaking逻辑": 8.5
+          },
+          "adaptedSelf": {
+            "dominance": 8.5,
+            "extraversion": 5.0,
+            "patience": 4.0,
+            "conformity": 8.0,
+            "decisionMaking": 8.0
+          },
+          "perceivedByOthers": {
+            "dominance": 8.8,
+            "extraversion": 4.5,
+            "patience": 3.8,
+            "conformity": 7.5,
+            "decisionMaking": 8.2
+          },
+          "energyIndicators": {
+            "satisfactionIndex": 3.5,
+            "energyDrain": 6.5,
+            "jobPressure": 7.0,
+            "consistency": 4.5
+          },
+          "traitDetails": {
+            "logicalThinking": 8.0,
+            "riskTaking": 9.0,
+            "detailOrientation": 6.5,
+            "teamCooperation": 5.0,
+            "communicationStyle": "直接型(Directly)"
+          }
+        }
       },
-      "Family": ""
+      "Family": {
+        "Patrilineal父系": {
+          "Father": "Exam·Example",
+          "GrandFather": "Exa·Example"
+        },
+        "Matriarchal母系": {
+          "Mother": "Exem·Example",
+          "GrandMother": "Exe·Example"
+        }
+      },
+      "Company":{
+        "Employment":"Ture",
+        "Enterprice":"Example Limited Company",
+        "Position":"CEO"
+      },
+      "Address":"Example National,Example "
+    
     }
   }
 }
