@@ -20,10 +20,12 @@ public class CitizenGenerator { //CitizenGenerator
             //read name repository to a 
             JSONObject NameRepository = new JSONObject(content);
             //pick a first name randomly
-            
+
         } catch (IOException e){
             e.printStackTrace();
         }
+
+
 
 
         try {

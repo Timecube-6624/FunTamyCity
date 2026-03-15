@@ -48,9 +48,15 @@ public class WorldEnviroment {
 
         System.out.println("Start simulation");
         CreateLogFile.getInstance().log("[WorldEnviroment]Start simulation");
+        CreateLogFile.getInstance().setLogLevel(CreateLogFile.LogLevel.INFO);
+        CreateLogFile.getInstance().flush();
     }
 
     public static void main(String[] args) {
+        //程序启动时暂停时间流动
+
+        System.out.println("[WorldEnviroment]Basic city settings");
+
         System.out.print("请输入速度倍数 (例如: 2.0 或 0.5): ");
         try {
             speedMultiplier = Double.parseDouble(scanner.nextLine());
@@ -107,20 +113,20 @@ public class WorldEnviroment {
 
             String jsonString = readFileString("Profiles/WorldEnviroment.json");
             JSONObject json = new JSONObject(jsonString);
-            double CityAtractiveness = json.getDouble("CityAtractiveness");
-            System.out.println("读取到" + CityAtractiveness);
+            double CityAttractiveness = json.getDouble("CityAttractiveness");
+            System.out.println("读取到" + CityAttractiveness);
 
 
             if ("Spring".equals(currentSeason)) {//设置不同季节的基本城市吸引值
-                CityAtractiveness = 100;
+                CityAttractiveness = 100;
             } else if("Summer".equals(currentSeason)) {
-                CityAtractiveness = 100;
+                CityAttractiveness = 100;
             } else if("Autumn".equals(currentSeason)) {
-                CityAtractiveness = 100;
+                CityAttractiveness = 100;
             } else if("Winter".equals(currentSeason)) {
-                CityAtractiveness = 100;
+                CityAttractiveness = 100;
             } else {
-                CityAtractiveness = 100;
+                CityAttractiveness = 100;
             }
             
         } catch (IOException e) {
@@ -140,7 +146,6 @@ public class WorldEnviroment {
             CreateLogFile.getInstance().log("Simulation stopped");
         }
     }
-
     /**
      * 执行单个Tick的逻辑
      */
@@ -187,8 +192,8 @@ public class WorldEnviroment {
                                 
                             case "r":
                                 isPaused = false;
-                                System.out.println("[System] Repaird");
-                                CreateLogFile.getInstance().log("[System] Repaird");
+                                System.out.println("[System] Repaired");
+                                CreateLogFile.getInstance().log("[System] Repaired");
                                 CreateLogFile.getInstance().flush();
                                 break;
                                 
@@ -226,6 +231,29 @@ public class WorldEnviroment {
     //将路径换成字符串传入
     public static String readFileString(String filePath) throws IOException {
         return new String(Files.readAllBytes(Paths.get("Profiles/WorldEnviroment.json")));
+    }
+
+    public static void resetSimulation() {
+        isRunning = false;
+        isPaused = false;
+        tickCount.set(0);
+        // 其他重置...
+    }
+    public static void uiStartSimulation() {
+        if (!isRunning) {
+            isRunning = true;
+            isPaused = false;
+            speedMultiplier = 1.0;
+            System.out.println("[WorldEnviroment]Staring from UI" + speedMultiplier + "x");
+            CreateLogFile.getInstance().log("[WorldEnviroment]Staring from UI" + speedMultiplier + "x");
+            CreateLogFile.getInstance().setLogLevel(CreateLogFile.LogLevel.INFO);
+            CreateLogFile.getInstance().flush();
+        } else {
+            System.out.println("[WorldEnviroment] already running");
+            CreateLogFile.getInstance().log("[WorldEnviroment] already running");
+            CreateLogFile.getInstance().setLogLevel(CreateLogFile.LogLevel.INFO);
+            CreateLogFile.getInstance().flush();
+        }
 
     }
     

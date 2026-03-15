@@ -1,5 +1,6 @@
 package EasyGui;
 import Simulation.CreateLogFile;
+import Simulation.WorldEnviroment;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -11,14 +12,13 @@ public class GuiWindow extends Application {
     @Override
     public void start(Stage primaryStage){
 
-        Button button = new Button();
-        button.setText("Start Simulate");//设置按钮文本
-        button.setOnAction(event -> {
-            System.out.println("Simulate start");
-
+        Button startButton = new Button("Start Simulate");
+        startButton.setOnAction(event -> {
+            WorldEnviroment.resetSimulation();
+            WorldEnviroment.uiStartSimulation();   // 启动，速度 1.0x
         });
         StackPane root = new StackPane();
-        root.getChildren().add(button);
+        root.getChildren().add(startButton);
         Scene scene = new Scene(root);
         primaryStage.setTitle("EasyGui");
         primaryStage.setScene(scene);
